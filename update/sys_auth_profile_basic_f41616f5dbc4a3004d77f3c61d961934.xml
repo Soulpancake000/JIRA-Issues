@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_auth_profile_basic">
+    <sys_auth_profile_basic action="INSERT_OR_UPDATE">
+        <name>JIRA Admin</name>
+        <password>MEyi3jQvb+N7MaSa+EyjGA==</password>
+        <sys_class_name>sys_auth_profile_basic</sys_class_name>
+        <sys_created_by>sush.chan</sys_created_by>
+        <sys_created_on>2018-08-21 16:01:35</sys_created_on>
+        <sys_id>f41616f5dbc4a3004d77f3c61d961934</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>JIRA Admin</sys_name>
+        <sys_package display_value="JIRA Issues" source="x_snc_jira_issues">47df46b1dbc4a3004d77f3c61d961908</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="JIRA Issues">47df46b1dbc4a3004d77f3c61d961908</sys_scope>
+        <sys_update_name>sys_auth_profile_basic_f41616f5dbc4a3004d77f3c61d961934</sys_update_name>
+        <sys_updated_by>sush.chan</sys_updated_by>
+        <sys_updated_on>2018-08-22 05:01:52</sys_updated_on>
+        <username>admin</username>
+    </sys_auth_profile_basic>
+</record_update>

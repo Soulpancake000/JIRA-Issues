@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function jiraIssues() {
+	var c = this;
+	
+	c.$onInit = function() {
+		c.limit = c.options.limit;
+		c.showMore = showMore;
+		c.showLess = showLess;
+	};
+	
+	c.server.get({ jira: true }).then(function(r) {
+		c.myIssues = r.data.responseBody.issues;
+	});
+	
+	function showMore(){
+		c.limit = c.myIssues.length;
+	}
+	
+	function showLess(){
+		c.limit = c.options.limit;
+	}
+}
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.panel-body {&#13;
+  padding: 0px !important;&#13;
+  .show{&#13;
+	padding:10px;  &#13;
+  }&#13;
+  &#13;
+  .text{&#13;
+    overflow: hidden;&#13;
+  }&#13;
+  .no-issues{&#13;
+    padding:10px; &#13;
+  }&#13;
+  .each-issue {&#13;
+    padding: 10px;&#13;
+    border-bottom: 1px solid #ddd;&#13;
+    a {&#13;
+      display: flex;&#13;
+      align-items: center;&#13;
+      img {&#13;
+        width: 30px;&#13;
+        margin-right: 10px;&#13;
+      }&#13;
+    }&#13;
+    .summary {&#13;
+      font-size: 14px;&#13;
+      line-height: 1;&#13;
+      margin-bottom: 5px;&#13;
+    }&#13;
+    .desc {&#13;
+      font-size: 11px;&#13;
+      margin-bottom: 0px;&#13;
+      line-height: 1;&#13;
+      white-space: nowrap;&#13;
+      overflow: hidden;&#13;
+      text-overflow: ellipsis;&#13;
+      height:12px;&#13;
+    }&#13;
+  }&#13;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>jira_issues</id>
+        <internal>false</internal>
+        <link/>
+        <name>JIRA Issues</name>
+        <option_schema>[{"name":"limit","section":"other","default_value":"5","label":"Limit","type":"integer"},{"name":"title","section":"other","label":"Title","type":"string"},{"name":"issues","section":"other","default_value":"Assigned to me","label":"Issues","type":"choice","choices":[{"label":"Assigned to me","value":"Assigned to me"},{"label":"Created by me","value":"Created by me"}]}]</option_schema>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[if (input && input.jira) {
+	getMyIssues();
+}
+
+function getMyIssues(assignee) {
+	try {
+		$sp.log(options.issues);
+		var r = new sn_ws.RESTMessageV2('x_snc_jira_issues.JIRA Issues', 'GET');
+		if(options.issues == 'Created by me'){
+			r.setStringParameterNoEscape('querykey', 'creator');
+		}else{
+			r.setStringParameterNoEscape('querykey', 'assignee');
+		}
+		//Assuming you used your servicenow email to sign up for JIRA ex: abel.tuter@servicenow.com.
+		r.setStringParameterNoEscape('queryvalue', gs.getUserName());
+		r.setStringParameterNoEscape('id', gs.getProperty('x_snc_jira_issues.AtlassianId'));
+		var response = r.execute();
+		data.responseBody = JSON.parse(response.getBody());
+		var httpStatus = response.getStatusCode();
+	} catch (ex) {
+		var message = ex.message;
+	}
+}]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>sush.chan</sys_created_by>
+        <sys_created_on>2018-08-21 16:20:55</sys_created_on>
+        <sys_id>acf91679dbc4a3004d77f3c61d96193e</sys_id>
+        <sys_mod_count>32</sys_mod_count>
+        <sys_name>JIRA Issues</sys_name>
+        <sys_package display_value="JIRA Issues" source="x_snc_jira_issues">47df46b1dbc4a3004d77f3c61d961908</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="JIRA Issues">47df46b1dbc4a3004d77f3c61d961908</sys_scope>
+        <sys_update_name>sp_widget_acf91679dbc4a3004d77f3c61d96193e</sys_update_name>
+        <sys_updated_by>sush.chan</sys_updated_by>
+        <sys_updated_on>2018-08-22 04:51:50</sys_updated_on>
+        <template><![CDATA[<div class="panel panel-{{::options.color}} b">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <fa ng-if="::options.glyph.length" name="{{::options.glyph}}" class="m-r-sm" />{{c.options.title}}</h4>
+    </div>
+    <div class="panel-body">
+        <div ng-if="c.myIssues.length == 0" class="text-center no-issues">
+          <span>${You have no issues in JIRA}</span>
+        </div>
+        <div ng-repeat="issue in c.myIssues | limitTo : c.limit" class="each-issue">
+            <a href="https://sushruth.atlassian.net/browse/{{issue.key}}" target="_blank">
+                <img src="/jira.png" />
+                <div class="text">
+                    <p class="summary">{{issue.fields.summary}}</p>
+                    <p class="desc">{{issue.fields.description}}</p>
+                </div>
+            </a>
+        </div>
+      <div class="text-center">
+      <a ng-if="c.myIssues.length > c.limit" href="javascript:void(0)" ng-click="c.showMore()" class="show">Show More</a>
+      <a ng-if="c.myIssues.length == c.limit && c.myIssues.length != c.options.limit" href="javascript:void(0)" ng-click="c.showLess()" class="show">Show Less</a>
+      </div>  
+    </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>
